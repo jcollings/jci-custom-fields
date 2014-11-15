@@ -1,0 +1,12 @@
+tr.multi-row td {
+    vertical-align: top;
+}
+
+tr.multi-row span.preview-text {
+    margin:0;
+}
+
+.jci-cf-actions {
+	padding-top: 12px;
+	padding-left: 10px;
+}

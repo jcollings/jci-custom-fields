@@ -10,9 +10,14 @@ Version: 0.0.1
 
 class JCI_Custom_Fields_Template{
 
+	var $plugin_dir = false;
+	var $plugin_url = false;
+
 	public function __construct(){
 
 		add_action( 'jci/init', array( $this, 'init' ), 10, 1);	
+		$this->plugin_dir = plugin_dir_path( __FILE__ );
+		$this->plugin_url = plugins_url( '/', __FILE__ );
 	}
 
 	/**
@@ -23,6 +28,7 @@ class JCI_Custom_Fields_Template{
 		add_action( 'jci/save_template',  array( $this, 'template_save' ) );
 		add_action( 'jci/after_template_fields', array( $this, 'output_fields'), 10, 3 );
 		add_action( 'jci/before_import', array( $this, 'before_import'));
+		add_action( 'admin_init', array( $this, 'enqueue_styles' ) );
 	}
 
 	/**
@@ -34,6 +40,14 @@ class JCI_Custom_Fields_Template{
 		
 		add_filter( 'jci/importer/get_groups', array($this, 'get_importer_groups'));
 		add_filter( 'jci/template/get_groups', array($this, 'get_template_groups'));
+	}
+
+	/**
+	 * Enqueue admin stylesheet
+	 * @return void
+	 */
+	public function enqueue_styles(){
+		wp_enqueue_style( 'jci-cf-style', $this->plugin_url . '/assets/admin.css');
 	}
 
 	/**
@@ -154,7 +168,7 @@ class JCI_Custom_Fields_Template{
 									'class'   => 'xml-drop jci-group',
 									'after'   => ' <a href="#" class="jci-import-edit">[edit]</a><span class="preview-text"></span>'
 								) ); ?></td>
-								<td><a href="#" class="add-row">[+]</a>
+								<td class="jci-cf-actions"><a href="#" class="add-row">[+]</a>
 								<a href="#" class="del-row">[-]</a></td>
 								</tr>
 								<?php endforeach; ?>
