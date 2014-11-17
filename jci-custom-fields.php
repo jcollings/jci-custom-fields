@@ -110,15 +110,17 @@ class JCI_Custom_Fields_Template{
 		$importer = $jcimporter->importer;
 
 		$custom_fields = array();
-		$post = $_POST['jc-importer_custom-field'];
-		foreach($post as $group_id => $data){
+		$post = isset($_POST['jc-importer_custom-field']) ? $_POST['jc-importer_custom-field'] : false;
+		if($post){
+			foreach($post as $group_id => $data){
 
-			// create default scaffold
-			$post[$group_id] = array();
+				// create default scaffold
+				$post[$group_id] = array();
 
-			// populate with field => value
-			foreach($data['field'] as $k => $field){
-				$custom_fields[$group_id][$field] = $data['value'][$k];
+				// populate with field => value
+				foreach($data['field'] as $k => $field){
+					$custom_fields[$group_id][$field] = $data['value'][$k];
+				}
 			}
 		}
 
