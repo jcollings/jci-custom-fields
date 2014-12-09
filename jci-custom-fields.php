@@ -5,15 +5,19 @@ Plugin URI: http://jamescollings.co.uk/wordpress-plugins/jc-importer/
 Description: Add custom fields tab to JC Importer templates
 Author: James Collings <james@jclabs.co.uk>
 Author URI: http://www.jamescollings.co.uk
-Version: 0.0.1
+Version: 0.0.2
 */
 
 class JCI_Custom_Fields_Template{
 
 	var $plugin_dir = false;
 	var $plugin_url = false;
+	var $version = '0.0.2';
+	private $min_version = '0.2';
 
 	public function __construct(){
+
+		register_activation_hook( __FILE__, array( $this, 'install' ) );
 
 		add_action( 'jci/init', array( $this, 'init' ), 10, 1);	
 		$this->plugin_dir = plugin_dir_path( __FILE__ );
@@ -28,7 +32,17 @@ class JCI_Custom_Fields_Template{
 		add_action( 'jci/save_template',  array( $this, 'template_save' ) );
 		add_action( 'jci/after_template_fields', array( $this, 'output_fields'), 10, 3 );
 		add_action( 'jci/before_import', array( $this, 'before_import'));
-		add_action( 'admin_init', array( $this, 'enqueue_styles' ) );
+		add_action( 'admin_init', array( $this, 'enqueue_styles' ) );		
+	}
+
+	public function install(){
+
+		global $jcimporter;
+
+		if(!version_compare($jcimporter->version, $this->min_version, '>=')){
+			echo 'Sorry, JCI Custom fields requires version JC Importer version '.$this->min_version.' or greater to be installed.';
+	        exit;
+		}
 	}
 
 	/**
@@ -139,7 +153,7 @@ class JCI_Custom_Fields_Template{
 	public function output_fields($importer_id = 0, $group_id, $group){
 		
 		// escape if not post
-		if($group['import_type'] !== 'post')
+		if($group['import_type'] !== 'post' && $group['import_type'] !== 'user')
 			return;
 
 		$custom_fields = ImporterModel::getImporterMetaArr($importer_id, array('_import_settings', '_custom_fields'));
